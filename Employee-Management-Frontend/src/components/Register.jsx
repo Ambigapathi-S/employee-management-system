@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { registerAPICall } from "../services/AuthService";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -8,10 +11,20 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [validated, setValidated] = useState(false);
 
   const navigate = useNavigate();
 
   async function handleRegister(e) {
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    setValidated(true);
+
     e.preventDefault();
     const register = { name, username, email, password };
     try {
@@ -39,65 +52,88 @@ const Register = () => {
         }
         <div className="loginForm">
           <h3>Sign Up!</h3>
-          <form onSubmit={(e) => handleRegister(e)}>
+          <Form noValidate validated={validated} onSubmit={handleRegister}>
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                className="form-control"
-                id="name"
-                aria-describedby="name"
-                placeholder="Enter Full Name"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <Form.Group as={Col} md="12" controlId="validationCustom01">
+                <Form.Label>Full Name</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  isInvalid={
+                    validated &&
+                    !/^[a-zA-Z]+$/.test(name)
+                  }
+                />
+                <Form.Control.Feedback type="invalid">
+                  Required
+                </Form.Control.Feedback>
+              </Form.Group>
             </div>
             <div className="form-group mt-3">
-              <label htmlFor="email">Email</label>
-              <input
-                type="text"
-                name="email"
-                className="form-control"
-                id="email"
-                aria-describedby="email"
-                placeholder="Enter Email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Form.Group as={Col} md="12" controlId="validationCustom02">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  required
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  isInvalid={
+                    validated &&
+                    !/^\S+@\S+\.\S+$/.test(email)
+                  }
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid email address.
+                </Form.Control.Feedback>
+              </Form.Group>
             </div>
             <div className="form-group mt-3">
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                name="username"
-                className="form-control"
-                id="username"
-                aria-describedby="username"
-                placeholder="Enter Username"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+              <Form.Group as={Col} md="12" controlId="validationCustom03">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  isInvalid={
+                    validated &&
+                    !/^[a-zA-Z]+$/.test(username)
+                  }
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid username (alphanumeric
+                  characters only).
+                </Form.Control.Feedback>
+              </Form.Group>
             </div>
             <div className="form-group mt-3">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                placeholder="Password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <Form.Group as={Col} md="12" controlId="validationCustom04">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  minLength={4}
+                  required
+                  isInvalid={
+                    validated && password.length < 4
+                  }
+                />
+                <Form.Control.Feedback type="invalid">
+                  Password must be at least 4 characters long.
+                </Form.Control.Feedback>
+              </Form.Group>
             </div>
             <div className="text-center mt-3">
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <Button type="submit" className="btn btn-primary">Submit</Button>
             </div>
-          </form>
+          </Form>
         </div>
       </div>
     </section>

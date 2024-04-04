@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { updateEmployee, saveEmployee, getEmployee } from "../services/EmployeeService";
+
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+
 const EmployeeForm = () => {
   const { id } = useParams();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [email, setEmail] = useState();
   const [mobileNo, setMobileNo] = useState();
+  const [validated, setValidated] = useState(false);
 
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
 
   const pageTitle = () => {
     return id ? (
@@ -19,38 +24,34 @@ const EmployeeForm = () => {
     );
   };
 
-  const saveOrUpdateEmployee = async (e) => {
+  async function saveOrUpdateEmployee(e) {
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    setValidated(true);
+
     e.preventDefault();
-    setErrors(validateValues(firstName, lastName, email, mobileNo));
-    const employee = { firstName, lastName, email, mobileNo };
-    if (Object.keys(errors).length === 0) {
-      try {
-        if (id) {
-          await updateEmployee(id, employee);
-          navigate("/list");
-        } else {
-          const response = await saveEmployee(employee);
-          console.log(response.data);
+    try {
+      const employee = { firstName, lastName, email, mobileNo };
+      if (id) {
+        const response = await updateEmployee(id, employee);
+        if (response.status === 200) {
           navigate("/list");
         }
-      } catch (error) {
-        console.error(error);
+      } else {
+        const response = await saveEmployee(employee);
+        if (response.status === 200) {
+          navigate("/list");
+        }
       }
-    } else {
-      console.log("error")
+    } catch (error) {
+      console.error(error);
     }
-  };
 
-  const validateValues = (firstName, lastName, email, mobileNo) => {
-    let errors = {};
-    if (!email) {
-      errors.email = "Required";
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-      errors.email = "Invalid email address";
-    }
-    return errors;
   };
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,65 +75,89 @@ const EmployeeForm = () => {
     <div className="formUI">
       <h2 className="fs-4 text-center mb-4">{pageTitle()}</h2>
       <div className="card-body">
-        <form method="post" onSubmit={(e) => saveOrUpdateEmployee(e)}>
+        <Form noValidate validated={validated} onSubmit={saveOrUpdateEmployee}>
           <div className="form-group">
-            <label htmlFor="name">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              className="form-control"
-              id="firstName"
-              aria-describedby="firstName"
-              placeholder="Enter First Name"
-              required
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
+            <Form.Group as={Col} md="12" controlId="validationCustom01">
+              <Form.Label>First Name</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                placeholder="Full Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                isInvalid={
+                  validated &&
+                  !/^[a-zA-Z]+$/.test(firstName)
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                Required
+              </Form.Control.Feedback>
+            </Form.Group>
           </div>
           <div className="form-group mt-3">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              className="form-control"
-              id="lastName"
-              aria-describedby="lastName"
-              placeholder="Enter Last Name"
-              required
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
+            <Form.Group as={Col} md="12" controlId="validationCustom02">
+              <Form.Label>Last Name</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                isInvalid={
+                  validated &&
+                  !/^[a-zA-Z]+$/.test(lastName)
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                Required
+              </Form.Control.Feedback>
+            </Form.Group>
           </div>
           <div className="form-group mt-3">
-            <label htmlFor="email">Email</label>
-            <input
-              type="text"
-              name="email"
-              className="form-control"
-              id="email"
-              aria-describedby="email"
-              placeholder="Enter Email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <Form.Group as={Col} md="12" controlId="validationCustom03">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                required
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                isInvalid={
+                  validated &&
+                  !/^\S+@\S+\.\S+$/.test(email)
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                Please enter a valid email address.
+              </Form.Control.Feedback>
+            </Form.Group>
           </div>
           <div className="form-group mt-3">
-            <label htmlFor="mobileNo">Mobile Number</label>
-            <input
-              type="text"
-              className="form-control"
-              id="mobileNo"
-              placeholder="Mobile Number"
-              required
-              value={mobileNo}
-              onChange={(e) => setMobileNo(e.target.value)}
-            />
+            <Form.Group as={Col} md="12" controlId="validationCustom04">
+              <Form.Label>Mobile Number</Form.Label>
+              <Form.Control
+                type="text"
+                name="mobileNo"
+                placeholder='Mobile Number'
+                pattern="^\d{10}$"
+                required
+                value={mobileNo}
+                onChange={(e) => setMobileNo(e.target.value)}
+                isInvalid={
+                  validated &&
+                  !/^\d{10}$/.test(mobileNo)
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                Please enter a valid 10-digit phone number.
+              </Form.Control.Feedback>
+            </Form.Group>
           </div>
           <div className="text-center mt-3">
-            <button type="submit" className="btn btn-primary" >Submit</button>
+            <Button type="submit" className="btn btn-primary">Submit</Button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   )

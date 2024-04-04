@@ -1,5 +1,6 @@
 import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 import "./App.css";
+import "./style/style-mobile.css";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import NotFound from "./components/NotFound";
