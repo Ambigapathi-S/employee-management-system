@@ -5,6 +5,7 @@ import { updateEmployee, saveEmployee, getEmployee } from "../services/EmployeeS
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import AlertComponent from "./AlertComponent";
 
 const EmployeeForm = () => {
   const { id } = useParams();
@@ -13,6 +14,15 @@ const EmployeeForm = () => {
   const [email, setEmail] = useState();
   const [mobileNo, setMobileNo] = useState();
   const [validated, setValidated] = useState(false);
+
+
+  const alertValues = {
+    show: false,
+    variant: '',
+    description: ''
+  };
+  const [alert, setAlert] = useState(alertValues);
+  const [error, isError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -32,23 +42,40 @@ const EmployeeForm = () => {
     }
 
     setValidated(true);
-
-    e.preventDefault();
-    try {
-      const employee = { firstName, lastName, email, mobileNo };
-      if (id) {
-        const response = await updateEmployee(id, employee);
-        if (response.status === 200) {
-          navigate("/list");
+    if (form.checkValidity() === true) {
+      e.preventDefault();
+      try {
+        const employee = { firstName, lastName, email, mobileNo };
+        if (id) {
+          const response = await updateEmployee(id, employee);
+          if (response.status === 200 || response.status === 201) {
+            navigate("/list");
+          } else {
+            isError(true);
+            alertValues.show = true;
+            alertValues.variant = 'danger';
+            alertValues.description = response.data.message;
+            setAlert(alertValues);
+          }
+        } else {
+          const response = await saveEmployee(employee);
+          if (response.status === 200 || response.status === 201) {
+            navigate("/list");
+          } else {
+            isError(true);
+            alertValues.show = true;
+            alertValues.variant = 'danger';
+            alertValues.description = response.data.message;
+            setAlert(alertValues);
+          }
         }
-      } else {
-        const response = await saveEmployee(employee);
-        if (response.status === 200) {
-          navigate("/list");
-        }
+      } catch (error) {
+        isError(true);
+        alertValues.show = true;
+        alertValues.variant = 'danger';
+        alertValues.description = error.response.data.message;
+        setAlert(alertValues);
       }
-    } catch (error) {
-      console.error(error);
     }
 
   };
@@ -73,6 +100,7 @@ const EmployeeForm = () => {
 
   return (
     <div className="formUI">
+      {error && <AlertComponent data={alert} />}
       <h2 className="fs-4 text-center mb-4">{pageTitle()}</h2>
       <div className="card-body">
         <Form noValidate validated={validated} onSubmit={saveOrUpdateEmployee}>

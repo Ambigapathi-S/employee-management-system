@@ -4,12 +4,19 @@ import { loginAPICall, storeToken, saveLoggedInUser } from "../services/AuthServ
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import AlertComponent from "./AlertComponent";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [validated, setValidated] = useState(false);
-
+  const alertValues = {
+    show: false,
+    variant: '',
+    description: ''
+  };
+  const [alert, setAlert] = useState(alertValues);
+  const [error, isError] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogin(e) {
@@ -19,26 +26,39 @@ const Login = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-
     setValidated(true);
-
-    e.preventDefault();
-    try {
-      const response = await loginAPICall(username, password);
-      const token = "Bearer " + response.data.accessToken;
-      const role = response.data.role;
-
-      storeToken(token);
-      saveLoggedInUser(username, role);
-      navigate("/list");
-    } catch (error) {
-      console.error(error);
+    if(form.checkValidity() === true) {
+      e.preventDefault();
+      try {
+        const response = await loginAPICall(username, password);
+        if (response.status === 200) {
+          const token = "Bearer " + response.data.accessToken;
+          const role = response.data.role;
+          storeToken(token);
+          saveLoggedInUser(username, role);
+          navigate("/list");
+        } else {
+          isError(true);
+          alertValues.show = true;
+          alertValues.variant = 'danger';
+          alertValues.description = response.data.message;
+          setAlert(alertValues);
+        }
+      } catch (error) {
+        isError(true);
+        alertValues.show = true;
+        alertValues.variant = 'danger';
+        alertValues.description = error.response.data.message;
+        setAlert(alertValues);
+      }
     }
   }
 
 
   return (
+
     <section className="content">
+      {error && <AlertComponent data={alert} />}
       <div className="container">
         <div className="loginForm">
           <h3>Sign In</h3>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getEmployee } from "../services/EmployeeService";
 
 const ViewEmployee = () => {
@@ -8,6 +8,8 @@ const ViewEmployee = () => {
   const [lastName, setLastName] = useState();
   const [email, setEmail] = useState();
   const [mobileNo, setMobileNo] = useState();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,9 +28,18 @@ const ViewEmployee = () => {
     };
     fetchData();
   }, [id]);
+
+  function gotoList() {
+    navigate("/list");
+  }
+
   return (
     <div className='ViewEmployee'>
-      <h2>Employee Details - #{ id }</h2>
+      <div className='d-flex align-items-start justify-content-between'>
+        <h2>Employee Details - #{id}</h2>
+        <button className='btn btn-primary go-back' onClick={gotoList}>Back to List</button>
+      </div>
+
       <div className='form-group'>
         <label>First Name : </label><p> {firstName}</p>
       </div>

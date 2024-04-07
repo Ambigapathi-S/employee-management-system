@@ -4,14 +4,22 @@ import { registerAPICall } from "../services/AuthService";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import AlertComponent from './AlertComponent';
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [validated, setValidated] = useState(false);
+
+  const alertValues = {
+    show: false,
+    variant: '',
+    description: ''
+  };
+  const [alert, setAlert] = useState(alertValues);
+  const [error, isError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,34 +30,44 @@ const Register = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-
     setValidated(true);
-
-    e.preventDefault();
-    const register = { name, username, email, password };
-    try {
-      const response = await registerAPICall(register);
-      if (response.status === 200) {
-        setSuccessMsg("User Registered Successfully!...Please Login to Continue..!");
+    if (form.checkValidity() === true) {
+      e.preventDefault();
+      const register = { name, username, email, password };
+      try {
+        const response = await registerAPICall(register);
+        if (response.status === 200) {
+          setName(" "); setEmail(" "); setPassword(" "); setUsername(" ");
+          isError(true);
+          alertValues.show = true;
+          alertValues.variant = 'success';
+          alertValues.description = response.data.message;
+          setAlert(alertValues);
+        } else {
+          isError(true);
+          alertValues.show = true;
+          alertValues.variant = 'danger';
+          alertValues.description = response.data.message;
+          setAlert(alertValues);
+        }
+      } catch (error) {
+        isError(true);
+        alertValues.show = true;
+        alertValues.variant = 'danger';
+        alertValues.description = error.response.data.message;
+        setAlert(alertValues);
       }
-      setName(" "); setEmail(" "); setPassword(" "); setUsername(" ");
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
     }
   }
 
   function handleClose() {
     navigate("/login");
   }
+  
   return (
     <section className="content">
       <div className="container">
-        {successMsg &&
-          <div className='modal-popup'>
-            <p className='successMsg'>{successMsg} <span className='icon' onClick={() => handleClose()}>X</span></p>
-          </div>
-        }
+        {error && <AlertComponent data={alert} />}
         <div className="loginForm">
           <h3>Sign Up!</h3>
           <Form noValidate validated={validated} onSubmit={handleRegister}>
