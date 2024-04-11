@@ -12,7 +12,7 @@ const AlertComponent = ({ data }) => {
     return (
         <Alert variant={data.variant} onClose={() => checkAlert(false)} dismissible>
             <Alert.Heading className='mb-0'>{data.description}</Alert.Heading>
-        </Alert >
+        </Alert>
     );
 
 }

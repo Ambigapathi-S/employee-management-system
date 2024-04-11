@@ -227,6 +227,7 @@ footer p {
     border-radius: 10px;
     padding: 2rem;
     margin: 5rem auto;
+    background: #fff;
 }
 
 .loginForm .btn.btn-primary {
@@ -255,6 +256,7 @@ footer p {
     box-shadow: 1px 10px 10px 5px #2222221a;
     border-radius: 10px;
     padding: 2rem;
+    background: #fff;
 }
 
 .ViewEmployee .form-group {

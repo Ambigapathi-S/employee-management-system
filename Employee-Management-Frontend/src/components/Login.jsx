@@ -85,7 +85,7 @@ const Login = () => {
             </div>
             <div className="form-group mt-3">
               <Form.Group as={Col} md="12" controlId="validationCustom02">
-                <Form.Label>Username</Form.Label>
+                <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
                   placeholder="Password"
