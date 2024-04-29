@@ -37,12 +37,8 @@ const Register = () => {
       try {
         const response = await registerAPICall(register);
         if (response.status === 200) {
-          setName(" "); setEmail(" "); setPassword(" "); setUsername(" ");
-          isError(true);
-          alertValues.show = true;
-          alertValues.variant = 'success';
-          alertValues.description = response.data.message;
-          setAlert(alertValues);
+          setName(""); setEmail(""); setPassword(""); setUsername("");
+          navigate("/login");
         } else {
           isError(true);
           alertValues.show = true;

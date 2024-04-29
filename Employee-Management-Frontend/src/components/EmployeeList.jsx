@@ -106,7 +106,9 @@ const EmployeeList = () => {
                   </td>
                 </tr>
               ))}
-
+              {!employeeList.length && (
+                <tr><td colSpan={4} className='text-center'>No Data Found!</td></tr>
+              )}
             </tbody>
           </table>
         </div>
