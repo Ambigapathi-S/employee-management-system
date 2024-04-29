@@ -22,6 +22,7 @@ This project implements a web-based employee management system with role-based a
 # Project Structure:
    * frontend: React application for the user interface
    * backend: Spring Boot application for the backend API
+   * [SQL Queries are addded here](https://github.com/Ambigapathi-S/employee-management-system/tree/main/Employee-Management-Backend/src/main/resources/sql)
      
    [ Added a video of project work flow.Click this link to go the video path.](https://github.com/Ambigapathi-S/employee-management-system/blob/main/Employee-Management-Frontend/public/Employee%20Management%20System.mp4)
   
