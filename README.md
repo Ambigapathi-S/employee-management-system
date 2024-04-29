@@ -24,7 +24,7 @@ This project implements a web-based employee management system with role-based a
    * backend: Spring Boot application for the backend API
   
 # Documentation
-    For detailed instructions on setting up the development environment, using the application, and deploying it, refer to the full documentation within the project.
+   [ For detailed instructions on setting up the development environment, using the application, and deploying it, refer to the full documentation within the project.](https://docs.google.com/document/d/14KypzfrWNscDmSjpQmkOcZQ6srq94oWm1xcFd90li98/edit)
 
 
 # Version Control
